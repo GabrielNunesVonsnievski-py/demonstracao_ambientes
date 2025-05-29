@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html ng-app="formApp">
+  <head>
+    <meta charset="UTF-8">
+    <title>Formulário de Agendamento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="app.js"></script>
+  </head>
+  <body ng-controller="FormController" class="bg-light p-4">
+
+    <div class="container bg-white p-4 rounded shadow">
+      <h2 class="mb-4">Demonstração simples de agendamento</h2>
+
+      <form>
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Disciplina</label>
+            <select class="form-select" ng-model="form.escola" ng-options="e for e in escolas"></select>
+          </div>
+
+         <!--  <div class="col-md-4">
+            <label class="form-label">Disciplina</label>
+            <select class="form-select" ng-model="form.disciplina" ng-options="e for e in disciplinas"></select>
+          </div> -->
+
+          <div class="col-md-4">
+            <label class="form-label">Semestre</label>
+            <select class="form-select" ng-model="form.semestre" ng-change="definirDatas()" ng-options="s.nome for s in semestres track by s.id"></select>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Professor</label>
+            <input type="text" class="form-control" ng-model="form.professor">
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-3">
+            <label class="form-label">Intervalo</label>
+            <div class="form-control bg-light">
+              {{ intervalo.start | date:'dd/MM/yyyy' }} a {{ intervalo.end | date:'dd/MM/yyyy' }}
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Turno</label>
+            <select class="form-select" ng-model="form.turno" ng-options="t for t in turnos"></select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Qtd. Aulas</label>
+            <select class="form-select" ng-model="form.aulas">
+              <option ng-value="1">2 primeiras</option>
+              <option ng-value="2">2 ultimas</option>
+              <option ng-value="4">4</option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label">Ambiente padrão</label>
+            <select class="form-select" ng-model="form.ambiente" ng-options="a.nome for a in ambientes track by a.id"></select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Dias da Semana</label><br>
+          <div class="form-check form-check-inline" ng-repeat="(dia, label) in diasSemana">
+            <input type="checkbox" class="form-check-input" ng-model="form.diasSelecionados[dia]" id="dia{{dia}}" ng-change="gerarTabela()">
+            <label class="form-check-label" for="dia{{dia}}">{{ label }}</label>
+          </div>
+        </div>
+
+        <!-- <button type="button" class="btn btn-primary" ng-click="gerarTabela()">Gerar Tabela</button> -->
+      </form>
+
+      <div ng-if="tabela.length" class="mt-5">
+        <h3>Agendamentos</h3>
+
+        <div style="max-height: 500px; overflow-y: auto; border: 1px solid #ccc; border-radius: 8px;">
+          <div class="alert alert-danger mt-2" ng-if="muitosConflitos">
+            Muitos conflitos com este ambiente, considere trocar o ambiente padrão.
+          </div>
+          <div class="alert alert-warning mt-2" ng-if="conflitos && !muitosConflitos">
+            Existem {{conflitos}} conflitos.
+          </div>
+          <table class="table table-striped mb-0">
+            <thead class="table-dark" style="position: sticky; top: 0; z-index: 1;">
+              <tr>
+                <th>Data</th>
+                <th>Dia da Semana</th>
+                <th>Horário</th>
+                <th>Ambiente</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat-start="item in tabela" ng-class="{
+                  'table-danger': item.conflito && muitosConflitos,
+                  'table-warning': item.conflito && !muitosConflitos
+                }">
+                <td>{{ item.data | date:'dd/MM/yyyy' }}</td>
+                <td>{{ item.dia }}</td>
+                <td>{{ item.horario }}</td>
+                <td>
+                  <select class="form-select" ng-model="item.ambiente" ng-options="a.nome for a in ambientes track by a.id"></select>
+                </td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary" ng-click="desmembrar(item)" ng-if="!item.desmembrado">Desmembrar</button>
+                </td>
+              </tr>
+              <tr ng-repeat="aula in item.subaulas" ng-if="item.desmembrado" class="table-secondary">
+                <td colspan="2"></td>
+                <td>{{ aula.horario }}</td>
+                <td>
+                  <select class="form-select" ng-model="aula.ambiente" ng-options="a.nome for a in ambientes track by a.id"></select>
+                </td>
+                <td></td>
+              </tr>
+              <tr ng-repeat-end></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
