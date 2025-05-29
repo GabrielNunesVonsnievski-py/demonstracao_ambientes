@@ -13,7 +13,7 @@
 <body ng-controller="FormController">
 
   <div class="container p-3 bg-primary text-center rounded-top">
-    <h2 class="mb-4 modal-header text-white">Demonstração simples de agendamento</h2>
+    <h2 class="mb-4 modal-header text-white">Demonstração Simples De Agendamento</h2>
   </div>
     <div class="container rounded shadow p-4">
 
@@ -86,33 +86,50 @@
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content shadow-lg rounded-4">
             <div class="modal-header rounded-top bg-primary">
-              <h5 class="modal-title text-white ">Informações do Evento</h5>
+              <h5 class="modal-title text-white">Informações do Evento</h5>
               <button type="button" class="btn-close btn-close-white" aria-label="Close" ng-click="fecharModal()"></button>
             </div>
             <div class="modal-body">
 
-              <form class="FormModal row">
-                <div class="col-md-8">
-                  <label class="form-label">Título:</label>
-                  <input type="text" ng-model="eventoSelecionado.title" class="form-control text-center">
+              <form class="row g-3 justify-content-center">
+
+                <div class="col-md-4 text-center">
+                  <label class="form-label">Dia:</label>
+                  <input type="text" ng-model="eventoSelecionado.dia" class="form-control text-center" readonly>
                 </div>
-                <div class="col-md-4">
+
+                <div class="col-md-5 text-center">
+                  <label class="form-label">Horário:</label>
+                  <input type="text" ng-model="eventoSelecionado.horario" class="form-control text-center" readonly>
+                </div>
+
+                <div class="col-md-4 text-center">
+                  <label class="form-label">Ambiente:</label>
+                  <tr ng-repeat="aula in item.subaulas" ng-if="item.desmembrado" class="table-secondary">
+                    <td colspan="2"></td>
+                    <td>{{ aula.horario }}</td>
+                    <td>
+                      <select class="form-select" ng-model="aula.ambiente" ng-options="a.nome for a in ambientes track by a.id"></select>
+                    </td>
+                    <td></td>
+                  </tr>
+                </div>
+
+                <div class="col-md-5 text-center">
                   <label class="form-label">Data:</label>
                   <input type="text" ng-model="eventoSelecionado.startStr" class="form-control text-center">
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Horários:</label>
-                  <input type="text" ng-model="eventoSelecionado.startHora" class="form-control text-center">
-                </div>
-                <div class="col-3 ">
-                  <button type="button" class="btn btn-outline-primary btn-sm" ng-click="desmembrar(item)" ng-if="!item.desmembrado">Desmembrar</button>
                 </div>
               </form>
 
             </div>
-            <div class="modal-footer">
-              <button ng-click="salvarEvento()" class="btn btn-primary">Salvar</button>
-              <button ng-click="fecharModal()" class="btn btn-secondary">Fechar</button>
+            <div class="modal-footer d-flex justify-content-between">
+              <button class="btn btn-sm btn-outline-primary" ng-click="desmembrar(item)" ng-if="!item.desmembrado">
+                Desmembrar Horário
+              </button>
+
+              <button ng-click="salvarEvento()" class="btn btn-primary">
+                Salvar
+              </button>
             </div>
           </div>
         </div>
@@ -190,17 +207,17 @@
 
   .modal-content {
     border-radius: 1rem;
-    animation: fadeInDown 0.3s ease-out;
+    animation: fadeInDown 0.5s ease-out;
   }
 
   @keyframes fadeInDown {
     from {
       opacity: 0;
-      transform: translate3d(0, -10%, 0);
+      transform: translate3d(100%, -100%, 0);
     }
     to {
       opacity: 1;
-      transform: none;
+      transform: translate3d(0, 0, 0);
     }
   }
 

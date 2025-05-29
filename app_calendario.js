@@ -129,7 +129,6 @@ angular.module('formApp', [])
 
     $scope.eventoSelecionado = angular.copy(evento);
 
-    // Proteção extra: se eventoSelecionado.start for undefined, nulo ou inválido
     if (!$scope.eventoSelecionado.start) {
       console.warn("Evento sem start definido!", evento);
       $scope.eventoSelecionado.start = new Date();
@@ -141,6 +140,12 @@ angular.module('formApp', [])
 
     $scope.eventoSelecionado.startStr = $scope.eventoSelecionado.start.toISOString().split('T')[0];
     $scope.eventoSelecionado.startHora = $scope.eventoSelecionado.start.toTimeString().slice(0,5);
+
+    // separa o title
+    const partes = $scope.eventoSelecionado.title.split('\n');
+    $scope.eventoSelecionado.dia = partes[0];
+    $scope.eventoSelecionado.horario = partes[1];
+    $scope.eventoSelecionado.ambiente = partes[2];
 
     $scope.modalAberta = true;
   };
