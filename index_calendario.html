@@ -83,7 +83,7 @@
       </form>
 
       <div class="modal fade show" ng-if="modalAberta" ng-style="{'background': 'rgba(0,0,0,0.5)'}">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog">
           <div class="modal-content shadow-lg rounded-4">
             <div class="modal-header rounded-top bg-primary">
               <h5 class="modal-title text-white">Informações do Evento</h5>
@@ -91,42 +91,77 @@
             </div>
             <div class="modal-body">
 
-              <form class="row g-3 justify-content-center">
+              <div class="modal fade show" ng-if="modalAberta" ng-style="{'background': 'rgba(0,0,0,0.4)', 'backdrop-filter': 'blur(6px)'}">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content shadow-lg p-3 rounded-4" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border: 1px solid rgb(0, 117, 226);">
 
-                <div class="col-md-4 text-center">
-                  <label class="form-label">Dia:</label>
-                  <input type="text" ng-model="eventoSelecionado.dia" class="form-control text-center" readonly>
-                </div>
+                    <div class="modal-header rounded-top" style="background: linear-gradient(135deg, #0d6efd, #0a58ca); border-bottom: none;">
+                      <h5 class="modal-title text-white">Informações do Evento</h5>
+                      <button type="button" class="btn-close btn-close-white" aria-label="Close" ng-click="fecharModal()"></button>
+                    </div>
 
-                <div class="col-md-5 text-center">
-                  <label class="form-label">Horário:</label>
-                  <input type="text" ng-model="eventoSelecionado.horario" class="form-control text-center" readonly>
-                </div>
+                    <div class="modal-body">
+                      <div style="max-height: 500px; overflow-y: auto; border-radius: 0.75rem; padding: 10px;">
 
-                <div class="col-md-4 text-center">
-                  <label class="form-label">Ambiente:</label>
-                  <tr ng-repeat="aula in item.subaulas" ng-if="item.desmembrado" class="table-secondary">
-                    <td colspan="2"></td>
-                    <td>{{ aula.horario }}</td>
-                    <td>
-                      <select class="form-select" ng-model="aula.ambiente" ng-options="a.nome for a in ambientes track by a.id"></select>
-                    </td>
-                    <td></td>
-                  </tr>
-                </div>
+                        <div class="alert alert-danger mt-2" ng-if="muitosConflitos">
+                          Muitos conflitos com este ambiente, considere trocar o ambiente padrão.
+                        </div>
 
-                <div class="col-md-5 text-center">
-                  <label class="form-label">Data:</label>
-                  <input type="text" ng-model="eventoSelecionado.startStr" class="form-control text-center">
+                        <div class="alert alert-warning mt-2" ng-if="conflitos && !muitosConflitos">
+                          Existem {{conflitos}} conflitos.
+                        </div>
+
+                        <table class="table table-striped mb-0 rounded-3 overflow-hidden">
+                          <thead class="table-dark text-center">
+                            <tr>
+                              <th>Data</th>
+                              <th>Dia da Semana</th>
+                              <th>Horário</th>
+                              <th>Ambiente</th>
+                              <th>Ações</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr ng-repeat-start="item in tabela" ng-class="{
+                                'table-danger': item.conflito && muitosConflitos,
+                                'table-warning': item.conflito && !muitosConflitos
+                              }">
+                              <td>{{ item.data | date:'dd/MM/yyyy' }}</td>
+                              <td>{{ item.dia }}</td>
+                              <td>{{ item.horario }}</td>
+                              <td>
+                                <select class="form-select form-select-sm" ng-model="item.ambiente" ng-options="a.nome for a in ambientes track by a.id"></select>
+                              </td>
+                              <td>
+                                <button class="btn btn-outline-primary btn-sm rounded-pill" ng-click="desmembrar(item)" ng-if="!item.desmembrado">Desmembrar</button>
+                              </td>
+                            </tr>
+                            <tr ng-repeat="aula in item.subaulas" ng-if="item.desmembrado" class="table-secondary">
+                              <td colspan="2"></td>
+                              <td>{{ aula.horario }}</td>
+                              <td>
+                                <select class="form-select form-select-sm" ng-model="aula.ambiente" ng-options="a.nome for a in ambientes track by a.id"></select>
+                              </td>
+                              <td></td>
+                            </tr>
+                            <tr ng-repeat-end></tr>
+                          </tbody>
+                        </table>
+
+                      </div>
+                    </div>
+
+                    <div class="modal-footer d-flex justify-content-end border-top-0">
+                      <button ng-click="salvarEvento()" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                        Salvar
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </form>
+              </div>
 
             </div>
-            <div class="modal-footer d-flex justify-content-between">
-              <button class="btn btn-sm btn-outline-primary" ng-click="desmembrar(item)" ng-if="!item.desmembrado">
-                Desmembrar Horário
-              </button>
-
+            <div class="modal-footer d-flex">
               <button ng-click="salvarEvento()" class="btn btn-primary">
                 Salvar
               </button>
@@ -200,26 +235,32 @@
     margin-bottom: 20px;
   }
 
-  .modal.show {
-    display: block;
-    backdrop-filter: blur(4px);
-  }
+.modal.show {
+  display: block;
+  backdrop-filter: blur(4px);
+}
 
-  .modal-content {
-    border-radius: 1rem;
-    animation: fadeInDown 0.5s ease-out;
-  }
+.modal-content {
+  border-radius: 1rem;
+  animation: fadeInDown 0.5s ease-out;
+}
 
-  @keyframes fadeInDown {
-    from {
-      opacity: 0;
-      transform: translate3d(100%, -100%, 0);
-    }
-    to {
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
-    }
-  }
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: rgba(33, 37, 41, 0.61); /* dark gray with transparency */
+}
+
+.table {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  width: 800px;
+}
+
+.btn-close {
+  filter: brightness(0) invert(1);
+}
 
   .modal-header {
     border-bottom: none;
