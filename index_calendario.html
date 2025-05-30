@@ -86,7 +86,7 @@
         <div class="modal-dialog">
           <div class="modal-content shadow-lg rounded-4">
             <div class="modal-header rounded-top bg-primary">
-              <h5 class="modal-title text-white">Informações do Evento</h5>
+              <h5 class="modal-title text-white">Informações do Evento Selecionado</h5>
               <button type="button" class="btn-close btn-close-white" aria-label="Close" ng-click="fecharModal()"></button>
             </div>
             <div class="modal-body">
@@ -102,6 +102,17 @@
 
                     <div class="modal-body">
                       <div style="max-height: 500px; overflow-y: auto; border-radius: 0.75rem; padding: 10px;">
+
+                          <form class="FormModal row">
+                          <div class="col-md-8">
+                            <label class="form-label">Título:</label>
+                            <input type="text" ng-model="eventoSelecionado.title" class="form-control text-center">
+                          </div>
+                          <div class="col-md-4">
+                            <label class="form-label">Data:</label>
+                            <input type="text" ng-model="eventoSelecionado.startStr" class="form-control text-center">
+                          </div>
+                        </form>
 
                         <div class="alert alert-danger mt-2" ng-if="muitosConflitos">
                           Muitos conflitos com este ambiente, considere trocar o ambiente padrão.
