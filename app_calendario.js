@@ -65,10 +65,10 @@ angular.module('formApp', [])
 
   $scope.atualizarCalendario = function() {
     if (calendar) {
-      const eventos = $scope.tabela.map(function(item) {
+      const eventos = $scope.tabela.map(function(eventoSelecionado) {
         return {
-          title: item.dia + '\n' + item.horario + '\n' + item.ambiente.nome,
-          start: item.data,
+          title: eventoSelecionado.dia + '\n' + eventoSelecionado.horario + '\n' + eventoSelecionado.ambiente.nome,
+          start: eventoSelecionado.data,
           allDay: true
         };
       });
@@ -81,10 +81,10 @@ angular.module('formApp', [])
     if (!$scope.form.semestre) return;
 
     const inicio = new Date($scope.form.semestre.inicio);
-    const eventos = $scope.tabela.map(function(item) {
+    const eventos = $scope.tabela.map(function(eventoSelecionado) {
       return {
-        title: item.dia + '\n' + item.horario + '\n' + item.ambiente.nome,
-        start: item.data,
+        title: eventoSelecionado.dia + '\n' + eventoSelecionado.horario + '\n' + eventoSelecionado.ambiente.nome,
+        start: eventoSelecionado.data,
         allDay: true
       };
     });
@@ -197,9 +197,9 @@ angular.module('formApp', [])
 
     let total = $scope.tabela.length;
     let conflitos = 0;
-    $scope.tabela.forEach(item => {
+    $scope.tabela.forEach(eventoSelecionado => {
       if (Math.random() < 0.3) {
-        item.conflito = true;
+        eventoSelecionado.conflito = true;
         conflitos++;
       }
     });
@@ -211,7 +211,7 @@ angular.module('formApp', [])
     $scope.criarCalendariosSemestre();
   };
 
-  $scope.desmembrar = function(item) {
+  $scope.desmembrar = function(eventoSelecionado) {
     var quantidade = $scope.form.aulas;
     let slice = 0;
     let quantidade_slice = 4;
@@ -225,10 +225,10 @@ angular.module('formApp', [])
     }
 
     const horariosAula = horarios[$scope.form.turno].desmembrado.slice(slice, quantidade_slice);
-    item.desmembrado = true;
-    item.subaulas = horariosAula.map(h => ({
+    eventoSelecionado.desmembrado = true;
+    eventoSelecionado.subaulas = horariosAula.map(h => ({
       horario: h,
-      ambiente: item.ambiente
+      ambiente: eventoSelecionado.ambiente
     }));
   };
 });
