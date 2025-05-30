@@ -54,6 +54,8 @@ angular.module('formApp', [])
     }
   };
 
+  $scope.evetnoFiltrado = [];
+
   $scope.definirDatas = function() {
     if ($scope.form.semestre) {
       $scope.intervalo.start = $scope.form.semestre.inicio;
@@ -141,11 +143,27 @@ angular.module('formApp', [])
     $scope.eventoSelecionado.startStr = $scope.eventoSelecionado.start.toISOString().split('T')[0];
     $scope.eventoSelecionado.startHora = $scope.eventoSelecionado.start.toTimeString().slice(0,5);
 
-    // separa o title
+    //separar o title
     const partes = $scope.eventoSelecionado.title.split('\n');
     $scope.eventoSelecionado.dia = partes[0];
     $scope.eventoSelecionado.horario = partes[1];
-    $scope.eventoSelecionado.ambiente = partes[2];
+    const nomeAmbiente = partes[2];
+
+    // Procurar o ambiente correspondente na lista de ambientes
+    const ambienteObj = $scope.ambientes.find(function(a) {
+      return a.nome === nomeAmbiente;
+    });
+
+    $scope.eventoSelecionado.ambiente = ambienteObj || null; //se nao encontrar
+
+    $scope.eventoFiltrado = [{
+      data: $scope.eventoSelecionado.start,
+      dia: $scope.eventoSelecionado.dia,
+      horario: $scope.eventoSelecionado.horario,
+      ambiente: $scope.eventoSelecionado.ambiente,
+      desmembrado: false,
+      subaulas: []
+    }];
 
     $scope.modalAberta = true;
   };

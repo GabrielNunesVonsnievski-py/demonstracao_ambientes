@@ -130,42 +130,50 @@
                           Existem {{conflitos}} conflitos.
                         </div>
 
-                        <table class="table table-striped rounded-3 overflow-hidden">
-                          <thead class="table table-dark bg-primary text-center">
-                            <tr>
-                              <th>Data</th>
-                              <th>Dia da Semana</th>
-                              <th>Horário</th>
-                              <th>Ambiente</th>
-                              <th>Ações</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr ng-repeat-start="eventoSelecionado in tabela" ng-class="{
-                                'table-danger': eventoSelecionado.conflito && muitosConflitos,
-                                'table-warning': eventoSelecionado.conflito && !muitosConflitos
-                              }">
-                              <td class="text-center">{{ eventoSelecionado.data | date:'dd/MM/yyyy' }}</td>
-                              <td class="text-center">{{ eventoSelecionado.dia }}</td>
-                              <td class="text-center">{{ eventoSelecionado.horario }}</td>
-                              <td>
-                                <select class="form-select form-select-sm" ng-model="eventoSelecionado.ambiente" ng-options="a.nome for a in ambientes track by a.id"></select>
-                              </td>
-                              <td class="text-center">
-                                <button class="btn btn-outline-primary btn-sm" ng-click="desmembrar(eventoSelecionado)" ng-if="!eventoSelecionado.desmembrado">Desmembrar</button>
-                              </td>
-                            </tr>
-                            <tr ng-repeat="aula in eventoSelecionado.subaulas" ng-if="eventoSelecionado.desmembrado" class="table-secondary">
-                              <td colspan="2"></td>
-                              <td>{{ aula.horario }}</td>
-                              <td>
-                                <select class="form-select form-select-sm" ng-model="aula.ambiente" ng-options="a.nome for a in ambientes track by a.id"></select>
-                              </td>
-                              <td></td>
-                            </tr>
-                            <tr ng-repeat-end></tr>
-                          </tbody>
-                        </table>
+                          <table class="table table-striped rounded-3 overflow-hidden">
+                            <thead class="table table-dark bg-primary text-center">
+                              <tr>
+                                <th>Data</th>
+                                <th>Dia da Semana</th>
+                                <th>Horário</th>
+                                <th>Ambiente</th>
+                                <th>Ações</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr ng-repeat-start="eventoSelecionado in eventoFiltrado">
+                                <td class="text-center">{{ eventoSelecionado.data | date:'dd/MM/yyyy' }}</td>
+                                <td class="text-center">{{ eventoSelecionado.dia }}</td>
+                                <td class="text-center">{{ eventoSelecionado.horario }}</td>
+                                <td>
+                                  <select class="form-select form-select-sm"
+                                          ng-model="eventoSelecionado.ambiente"
+                                          ng-options="a.nome for a in ambientes track by a.id">
+                                  </select>
+                                </td>
+                                <td class="text-center">
+                                  <button class="btn btn-outline-primary btn-sm"
+                                          ng-click="desmembrar(eventoSelecionado)"
+                                          ng-if="!eventoSelecionado.desmembrado">Desmembrar</button>
+                                </td>
+                              </tr>
+                              <tr ng-repeat="aula in eventoSelecionado.subaulas"
+                                  ng-if="eventoSelecionado.desmembrado"
+                                  class="table-secondary">
+                                <td colspan="2"></td>
+                                <td class="text-center">{{ aula.horario }}</td>
+                                <td>
+                                  <select class="form-select form-select-sm"
+                                          ng-model="aula.ambiente"
+                                          ng-options="a.nome for a in ambientes track by a.id">
+                                  </select>
+                                </td>
+                                <td></td>
+                              </tr>
+                              <tr ng-repeat-end></tr>
+                            </tbody>
+                          </table>
+
 
                       </div>
                     </div>
