@@ -79,6 +79,18 @@ angular.module('formApp', [])
     }
   };
 
+  function gerarDataAleatoria(inicio, fim) {
+    return new Date(inicio.getTime() + Math.random() * (fim.getTime() - inicio.getTime()));
+  }
+
+  function gerarVariasDatasAleatorias(inicio, fim, quantidade) {
+    const datas = [];
+    for (let i = 0; i < quantidade; i++) {
+      datas.push(gerarDataAleatoria(inicio, fim));
+    }
+    return datas;
+  }
+
   $scope.criarCalendariosSemestre = function() {
     if (!$scope.form.semestre) return;
 
@@ -91,10 +103,18 @@ angular.module('formApp', [])
       };
     });
 
+    // Gerar datas aleatórias entre os semestres
+    const datasEspecificas = [];
+
+    $scope.semestres.forEach(function(semestre) {
+      const datasAleatorias = gerarVariasDatasAleatorias(semestre.inicio, semestre.fim, 20);  // Exemplo: 4 datas por semestre
+      datasEspecificas.push(...datasAleatorias);
+    });
+
     for (let i = 0; i < 6; i++) {
       const mes = new Date(inicio.getFullYear(), inicio.getMonth() + i, 1);
       const calendarEl = document.getElementById('calendarioMes' + (i + 1));
-      calendarEl.innerHTML = ''; // Limpar antes de recriar
+      calendarEl.innerHTML = '';
 
       const cal = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
@@ -114,15 +134,16 @@ angular.module('formApp', [])
             titleEl.innerHTML = info.event.title.replace(/\n/g, '<br>');
           }
 
-          // Mudar a cor se o evento em mês específico
           var eventDate = new Date(info.event.start);
 
-          if (eventDate.getMonth() === 3 || eventDate.getMonth() === 5) {  // Abril (3) ou Junho (5)
-            info.el.style.backgroundColor = '#3cb371'; // cor
-            info.el.style.borderColor = '#ff0000';     // cor borda
-          } else if (eventDate.getMonth() === 1 || eventDate.getMonth() === 4) {  // Fevereiro (1) ou Maio (4)
-            info.el.style.backgroundColor = '#ff0000'; // cor corrigida
-            info.el.style.borderColor = '#ffa500';     // cor borda
+          var corresponde = datasEspecificas.some(function(data) {
+            return eventDate.toDateString() === data.toDateString();
+          });
+
+          if (corresponde) {
+            info.el.style.backgroundColor = '#ff6e00';
+          } else if (eventDate.getMonth() === 2) {
+            info.el.style.backgroundColor = '#ff0000';
           }
         },
         eventClick: function(info) {
@@ -131,6 +152,7 @@ angular.module('formApp', [])
           });
         },
       });
+
       cal.render();
     }
   };
