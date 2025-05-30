@@ -101,6 +101,8 @@ angular.module('formApp', [])
         initialDate: mes,
         events: eventos,
         locale: 'pt-br',
+        showNonCurrentDates: false,
+
         headerToolbar: {
           left: '',
           center: 'title',
@@ -110,6 +112,17 @@ angular.module('formApp', [])
           var titleEl = info.el.querySelector('.fc-event-title');
           if (titleEl) {
             titleEl.innerHTML = info.event.title.replace(/\n/g, '<br>');
+          }
+
+          // Mudar a cor se o evento em mês específico
+          var eventDate = new Date(info.event.start);
+
+          if (eventDate.getMonth() === 3 || eventDate.getMonth() === 5) {  // Abril (3) ou Junho (5)
+            info.el.style.backgroundColor = '#3cb371'; // cor
+            info.el.style.borderColor = '#ff0000';     // cor borda
+          } else if (eventDate.getMonth() === 1 || eventDate.getMonth() === 4) {  // Fevereiro (1) ou Maio (4)
+            info.el.style.backgroundColor = '#ff0000'; // cor corrigida
+            info.el.style.borderColor = '#ffa500';     // cor borda
           }
         },
         eventClick: function(info) {
